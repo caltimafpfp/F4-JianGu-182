@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F4撿骨182｜網站管理後台</title>
+<script src="../firebase-config.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0c0b09;color:#e8dcc8;font-family:"Microsoft JhengHei",sans-serif}
+.wrap{max-width:1280px;margin:auto;padding:24px}.box{border:1px solid #5a4527;background:#15110c;padding:18px;margin-bottom:16px}
+h1,h2{color:#e7b85c;margin-top:0}input,textarea,select,button{font:inherit}
+input,textarea,select{width:100%;background:#090806;border:1px solid #5b4527;color:#f1e6d0;padding:10px}
+textarea{min-height:120px;resize:vertical}button{border:1px solid #8c672d;background:#39270f;color:#f1c66d;padding:9px 15px;cursor:pointer}
+button.danger{border-color:#7e302b;background:#32110f;color:#ff9a91}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}.field label{display:block;color:#c9a96e;margin-bottom:5px;font-size:13px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.hidden{display:none!important}.status{padding:10px;border:1px solid #5b4527;background:#090806;margin:10px 0;white-space:pre-wrap}
+.layout{display:grid;grid-template-columns:330px 1fr;gap:14px}.list{border:1px solid #4c3c24;min-height:420px;max-height:70vh;overflow:auto}.item{padding:11px;border-bottom:1px solid #332819;cursor:pointer}
+.item:hover,.item.on{background:#2a1d0d}.item b{display:block;color:#e0b259}.item small{color:#99876b}.muted{color:#99876b;font-size:13px}
+@media(max-width:850px){.layout,.row{grid-template-columns:1fr}.list{min-height:auto;max-height:300px}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="box"><h1>F4撿骨182｜網站管理後台</h1><div class="muted">GitHub Pages 前台 + Firebase Firestore / Authentication</div></div>
+
+<div id="cfgBox" class="box hidden">
+<h2>Firebase 尚未設定</h2>
+<p>請先把 Firebase 網頁應用程式的 firebaseConfig 貼到根目錄的 <b>firebase-config.js</b>。</p>
+</div>
+
+<div id="loginBox" class="box">
+<h2>管理員登入</h2>
+<div class="row"><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>密碼</label><input id="password" type="password"></div></div>
+<button id="loginBtn">登入</button>
+<div id="loginStatus" class="status hidden"></div>
+</div>
+
+<div id="appBox" class="hidden">
+<div class="box tools">
+  <button id="logoutBtn">登出</button>
+  <button id="migrateBtn">從舊 Supabase 匯入全部資料</button>
+  <span class="muted">匯入只需要做一次。完成後前台即可完全改讀 Firebase。</span>
+</div>
+<div id="workStatus" class="status hidden"></div>
+
+<div class="box">
+<div class="tools">
+  <label>管理項目：</label>
+  <select id="collectionSelect" style="max-width:260px"></select>
+  <button id="newBtn">新增</button>
+  <button id="saveBtn">儲存</button>
+  <button id="deleteBtn" class="danger">刪除</button>
+</div>
+</div>
+
+<div class="layout">
+  <div class="list" id="recordList"></div>
+  <div class="box"><h2 id="formTitle">資料編輯</h2><div id="form"></div></div>
+</div>
+</div>
+</div>
+
+<script type="module">
+const configured=()=>window.F4_FIREBASE_CONFIG && !String(window.F4_FIREBASE_CONFIG.apiKey||'').includes('PASTE_');
+if(!configured()){cfgBox.classList.remove('hidden');loginBox.classList.add('hidden');throw new Error('Firebase 尚未設定');}
+
+const {initializeApp}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js');
+const {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js');
+const {getFirestore,collection,getDocs,doc,setDoc,deleteDoc,writeBatch}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js');
+
+const fb=initializeApp(window.F4_FIREBASE_CONFIG), auth=getAuth(fb), db=getFirestore(fb);
+const SB='https://qbohgvdippqmskgildsx.supabase.co/rest/v1/';
+const SBKEY='sb_publishable_UXTwqWReoUEaDYWPFnMsuQ_6y1520ZG';
+
+const SCHEMAS={
+announcements:{label:'最新公告',id:'id',fields:[
+['title','標題','text'],['category','分類（公告/活動/系統/更新/下載）','text'],['published_on','日期','date'],['summary','摘要','textarea'],['body','內容','textarea'],
+['image_url','主圖片網址','text'],['images','圖片網址（每行一個）','lines'],['pinned','置頂','check'],['visible','顯示','check'],
+['title_size','標題字體大小','number'],['title_color','標題顏色','color'],['summary_size','摘要字體大小','number'],['summary_color','摘要顏色','color'],['body_size','內容字體大小','number'],['body_color','內容顏色','color']
+]},
+site_settings:{label:'網站基本設定',id:'id',fixedId:'main',fields:[
+['brand','網站名稱','text'],['hero_title','主標題','text'],['hero_kicker','上方小標','text'],['hero_slogan','主標語','text'],['footer_text','頁尾文字','text'],
+['hero_title_size','主標題大小','number'],['hero_title_color','主標題顏色','color'],['hero_kicker_size','小標大小','number'],['hero_kicker_color','小標顏色','color'],['hero_slogan_size','標語大小','number'],['hero_slogan_color','標語顏色','color']
+]},
+game_rates:{label:'遊戲倍率',id:'id',fields:[['label','名稱','text'],['value','倍率','number'],['sort_order','排序','number'],['label_size','名稱大小','number'],['label_color','名稱顏色','color'],['value_size','倍率大小','number'],['value_color','倍率顏色','color']]},
+hero_buttons:{label:'首頁三大按鈕',id:'id',fields:[['title','名稱','text'],['subtitle','英文小字','text'],['url','連結','text'],['style','樣式','text'],['sort_order','排序','number'],['visible','顯示','check']]},
+support_links:{label:'客服與支持',id:'id',fields:[['title','名稱','text'],['subtitle','英文小字','text'],['icon','圖示文字','text'],['url','連結','text'],['sort_order','排序','number'],['visible','顯示','check']]},
+download_links:{label:'下載專區',id:'id',fields:[['title','名稱','text'],['subtitle','英文小字','text'],['url','下載連結','text'],['sort_order','排序','number'],['visible','顯示','check']]},
+content_sections:{label:'遊戲介紹分類',id:'id',fields:[['title','分類名稱','text'],['summary','摘要','text'],['body','內容','textarea'],['image_url','圖片網址','text'],['url','連結','text'],['sort_order','排序','number'],['visible','顯示','check'],['title_size','標題大小','number'],['title_color','標題顏色','color']]},
+guide_entries:{label:'遊戲介紹文章',id:'id',fields:[['category_id','所屬分類 ID','text'],['title','標題','text'],['intro','簡介','textarea'],['content','內容','textarea'],['images','圖片網址（每行一個）','lines'],['sort_order','排序','number'],['visible','顯示','check'],['title_size','標題大小','number'],['title_color','標題顏色','color'],['intro_size','簡介大小','number'],['intro_color','簡介顏色','color'],['content_size','內容大小','number'],['content_color','內容顏色','color']]}
+};
+for(const [k,v] of Object.entries(SCHEMAS)){const o=document.createElement('option');o.value=k;o.textContent=v.label;collectionSelect.appendChild(o)}
+
+let records=[],current=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const status=(msg,bad=false)=>{workStatus.classList.remove('hidden');workStatus.textContent=msg;workStatus.style.borderColor=bad?'#853530':'#5b4527'};
+
+async function load(){
+  const name=collectionSelect.value, schema=SCHEMAS[name];
+  const snap=await getDocs(collection(db,name));records=snap.docs.map(d=>({__docId:d.id,...d.data()}));
+  records.sort((a,b)=>(Number(a.sort_order||0)-Number(b.sort_order||0))||String(a.title||a.label||a.brand||a.id||'').localeCompare(String(b.title||b.label||b.brand||b.id||'')));
+  recordList.innerHTML=records.map((r,i)=>`<div class="item" data-i="${i}"><b>${esc(r.title||r.label||r.brand||r.id||r.__docId)}</b><small>${esc(r.summary||r.subtitle||r.category_id||r.__docId)}</small></div>`).join('')||'<div class="item">目前沒有資料</div>';
+  document.querySelectorAll('[data-i]').forEach(x=>x.onclick=()=>selectRec(Number(x.dataset.i)));
+  if(schema.fixedId){
+    const idx=records.findIndex(r=>String(r.__docId)===schema.fixedId); idx>=0?selectRec(idx):newRec();
+  }else if(records.length)selectRec(0); else newRec();
+}
+function selectRec(i){current=records[i];document.querySelectorAll('[data-i]').forEach((x,j)=>x.classList.toggle('on',j===i));buildForm(current)}
+function newRec(){current=null;buildForm({});}
+function buildForm(data){
+  const schema=SCHEMAS[collectionSelect.value];
+  formTitle.textContent=(current?'編輯：':'新增：')+schema.label;
+  let html='';
+  if(!schema.fixedId)html+=`<div class="field"><label>資料 ID（留空會自動產生）</label><input data-key="__id" value="${esc(data.__docId||data.id||'')}"></div>`;
+  for(const [key,label,type] of schema.fields){
+    let val=data[key]??'';
+    if(type==='check')html+=`<div class="field"><label><input style="width:auto" type="checkbox" data-key="${key}" ${val!==false?'checked':''}> ${esc(label)}</label></div>`;
+    else if(type==='textarea'||type==='lines')html+=`<div class="field"><label>${esc(label)}</label><textarea data-key="${key}" data-type="${type}">${esc(type==='lines'?(Array.isArray(val)?val.join('\n'):val):val)}</textarea></div>`;
+    else html+=`<div class="field"><label>${esc(label)}</label><input type="${type}" data-key="${key}" data-type="${type}" value="${esc(val)}"></div>`;
+  }
+  form.innerHTML=html;
+}
+function collectData(){
+  const out={};
+  form.querySelectorAll('[data-key]').forEach(el=>{
+    const k=el.dataset.key;if(k==='__id')return;
+    if(el.type==='checkbox')out[k]=el.checked;
+    else if(el.dataset.type==='number')out[k]=el.value===''?0:Number(el.value);
+    else if(el.dataset.type==='lines')out[k]=el.value.split('\n').map(x=>x.trim()).filter(Boolean);
+    else out[k]=el.value;
+  });
+  out.updated_at=new Date().toISOString();
+  return out;
+}
+async function save(){
+  const name=collectionSelect.value,schema=SCHEMAS[name],data=collectData();
+  let id=schema.fixedId;
+  if(!id){
+    const idInput=form.querySelector('[data-key="__id"]');
+    id=String(idInput?.value||current?.__docId||data.id||'').trim();
+    if(!id)id=String(Date.now());
+  }
+  if(name==='announcements'||name==='guide_entries'||name==='hero_buttons'||name==='support_links'||name==='download_links'){
+    const n=Number(id);if(Number.isFinite(n))data.id=n; else data.id=id;
+  }else if(name!=='site_settings')data.id=data.id||id;
+  await setDoc(doc(db,name,id),data,{merge:true});
+  status('已儲存。');await load();
+}
+async function remove(){
+  if(!current)return;
+  const name=collectionSelect.value,schema=SCHEMAS[name];if(schema.fixedId){status('網站基本設定不可刪除。',true);return}
+  if(!confirm('確定刪除這筆資料？'))return;
+  await deleteDoc(doc(db,name,current.__docId));status('已刪除。');await load();
+}
+async function migrate(){
+  if(!confirm('要把舊 Supabase 的公開網站資料全部匯入 Firebase 嗎？\n同 ID 的資料會被覆蓋。'))return;
+  migrateBtn.disabled=true;status('正在匯入，請稍候…');
+  try{
+    const tables=['announcements','content_sections','guide_entries','game_rates','support_links','download_links','hero_buttons','site_settings','game_features'];
+    const h={apikey:SBKEY,Authorization:'Bearer '+SBKEY};
+    let count=0;
+    for(const t of tables){
+      const r=await fetch(SB+t+'?select=*',{headers:h,cache:'no-store'});if(!r.ok)throw Error(await r.text());
+      const arr=await r.json();let batch=writeBatch(db),n=0;
+      for(const row of arr){
+        const id=t==='site_settings'?'main':String(row.id ?? Date.now()+n);
+        batch.set(doc(db,t,id),row,{merge:true});n++;count++;
+        if(n%400===0){await batch.commit();batch=writeBatch(db)}
+      }
+      await batch.commit();
+    }
+    status(`匯入完成，共 ${count} 筆資料。現在前台可以完全改讀 Firebase。`);
+    await load();
+  }catch(e){console.error(e);status('匯入失敗：'+e.message,true)}
+  finally{migrateBtn.disabled=false}
+}
+
+loginBtn.onclick=async()=>{loginStatus.classList.remove('hidden');try{await signInWithEmailAndPassword(auth,email.value.trim(),password.value);loginStatus.textContent='登入成功';}catch(e){loginStatus.textContent='登入失敗：'+e.message}}
+logoutBtn.onclick=()=>signOut(auth);collectionSelect.onchange=load;newBtn.onclick=newRec;saveBtn.onclick=save;deleteBtn.onclick=remove;migrateBtn.onclick=migrate;
+
+onAuthStateChanged(auth,u=>{
+  if(u){loginBox.classList.add('hidden');appBox.classList.remove('hidden');load()}
+  else{loginBox.classList.remove('hidden');appBox.classList.add('hidden')}
+});
+</script>
+</body></html>
