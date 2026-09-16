@@ -3,92 +3,261 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>F4撿骨182｜網站內容管理後台</title>
+<title>F4撿骨182｜管理後台</title>
 <script src="../firebase-config.js"></script>
 <style>
-:root{--bg:#050507;--panel:#090a0f;--gold:#d19a3a;--light:#ffd98b;--line:#765127;--text:#f8edda;--muted:#b9ad9b}
-*{box-sizing:border-box}html{background:#050507}body{margin:0;background:#050507;color:var(--text);font-family:"Microsoft JhengHei",sans-serif}button,input,textarea,select{font:inherit}a{color:inherit;text-decoration:none}button{color:inherit}
+:root{
+  --bg:#0a030d; --panel:#0c0d12; --panel2:#101116; --line:#5a3b1a;
+  --line2:#3d2b19; --gold:#e0aa45; --gold2:#f0c269; --text:#eadfc9;
+  --muted:#9c8e78; --green:#318355; --red:#8f372e;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(circle at 10% 0,#16091a 0,#0a030d 42%,#050207 100%);color:var(--text);font-family:"Microsoft JhengHei",system-ui,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
 
-/* 1:1 沿用死亡騎士182後台視覺 */
-#adminApp{min-height:100vh;background:#070604;color:#ead9b7;font-family:"Microsoft JhengHei",sans-serif}
-.cms-login{width:min(430px,92vw);margin:8vh auto;border:1px solid #6f4b21;background:#0b0906;padding:26px;box-shadow:0 16px 60px #000}
-.cms-login h1{text-align:center;color:#e4b65c;margin:0 0 8px}.cms-login p{text-align:center;color:#9c8968}
-.cms-login input{display:block;width:100%;padding:11px;margin:8px 0;border:1px solid #4b351c;background:#050403;color:#f0dfbd}
-.cms-login button{width:100%;padding:11px;border:1px solid #996727;background:#573813;color:#f6dfb0;cursor:pointer}
-.cms-login a{display:block;text-align:center;margin-top:14px;color:#b69a67}
+.login{
+  width:min(430px,92vw); margin:8vh auto; padding:28px;
+  background:#0a0b0f;border:1px solid var(--line);box-shadow:0 20px 70px #000;
+}
+.login h1{margin:0 0 8px;color:var(--gold2);text-align:center}
+.login p{text-align:center;color:var(--muted)}
+.input,.textarea,.select{
+  width:100%;border:1px solid #554020;background:#08090d;color:#f2e5cc;
+  padding:10px 12px;outline:none
+}
+.input:focus,.textarea:focus,.select:focus{border-color:#a86e25}
+.textarea{min-height:120px;resize:vertical}
+.btn{
+  border:1px solid #855a27;background:#121218;color:#e7d2ae;
+  padding:10px 15px
+}
+.btn.gold{background:linear-gradient(#b87518,#8c560e);color:#fff4d2;border-color:#d69a3a}
+.btn.red{background:#6d241f;border-color:#9a3e36;color:#f6d3cb}
+.btn.green{background:#173d2c;border-color:#2a6e4b;color:#b9efd2}
+.btn.ghost{background:#0c0d12;border-color:#554020}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 
-.cms-shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}
-.cms-side{position:sticky;top:0;height:100vh;overflow:auto;padding:15px;background:#080604;border-right:1px solid #4a341b}
-.cms-side h2{margin:4px 0 16px;color:#e0b25a}
-.cms-side button,.cms-side a{display:block;width:100%;padding:11px;margin:6px 0;border:1px solid #3f2d18;background:#0b0907;color:#cdb68a;text-align:left;cursor:pointer}
-.cms-side button.active{border-color:#ad742e;background:#171007;color:#ffd172}
-.cms-main{padding:22px;min-width:0}
-.cms-main-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:15px}
-.cms-main-head h1{margin:0;color:#e2b75e}.cms-status{color:#9d8a68;font-size:13px}
-.cms-card{border:1px solid #4a341b;background:#0b0907;padding:18px;margin-bottom:15px}
-.cms-card h2{margin:0 0 14px;color:#dfb45c}
-.cms-card-head{display:flex;justify-content:space-between;align-items:center}
-.cms-card-head button,.cms-save,.cms-delete{padding:9px 14px;border:1px solid #996727;background:#5d3b14;color:#f2d69f;cursor:pointer}
-.cms-delete{margin-top:10px;background:#5a1714;border-color:#8f322b}
-.cms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-.cms-field{display:grid;gap:6px}.cms-field.wide{grid-column:1/-1}.cms-field span{font-size:12px;color:#b99f72}
-.cms-field input,.cms-field textarea,.cms-field select{width:100%;padding:9px;border:1px solid #4b351c;background:#050403;color:#f0dfbd}
-.cms-field textarea{min-height:125px;resize:vertical}
-.cms-subcard{padding:12px;margin:9px 0;border:1px solid #382918;background:#080604}
-.cms-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
-.cms-tabs button{padding:7px 10px;border:1px solid #49351d;background:#090705;color:#c3ab81;cursor:pointer}
-.cms-tabs button.active{color:#f0c56b;border-color:#a66f29}
-.cms-ann{margin:9px 0;border:1px solid #3b2b18;background:#080604}
-.cms-ann summary{padding:11px;cursor:pointer}.cms-ann summary small{float:right;color:#8a795f}.cms-ann .cms-grid{padding:12px}
-.cms-save{margin-top:12px}.cms-back{color:#b69865}
-.tag{display:inline-block;padding:3px 6px;border-radius:2px;color:#fff;text-align:center;font-size:10px}
-.tag-pinned{background:#8d3428}.tag-activity{background:#386e14}.tag-announcement{background:#a13b29}.tag-system{background:#76511e}.tag-update{background:#6f2798}.tag-download{background:#245b8f}
-.cms-note{padding:10px 12px;margin:0 0 14px;border:1px solid #4a341b;background:#090705;color:#9f8b69;font-size:12px}
-@media(max-width:900px){.cms-shell{grid-template-columns:1fr}.cms-side{height:auto;position:relative}.cms-grid{grid-template-columns:1fr}.cms-field.wide{grid-column:auto}}
+.wrap{width:min(1370px,calc(100% - 34px));margin:38px auto 80px}
+.topbar,.section{
+  background:#0c0d12;border:1px solid #65451f
+}
+.topbar{
+  min-height:135px;padding:20px 23px;display:flex;align-items:center;justify-content:space-between;gap:20px
+}
+.kicker{font:700 11px/1.5 Georgia,serif;letter-spacing:4px;color:#c78b28;margin-bottom:8px}
+.topbar h1{margin:0;color:#f0c268;font-family:Georgia,"Microsoft JhengHei",serif;font-size:30px}
+.userline{margin-top:10px;color:#b9a88c;font-size:14px}
+.top-actions{display:flex;gap:9px;align-items:center}
+
+.quicknav{
+  margin:18px 0;display:flex;gap:8px;flex-wrap:wrap
+}
+.quicknav button{
+  border:1px solid #4d371f;background:#0c0d12;color:#b9a27b;padding:8px 12px
+}
+.quicknav button:hover{color:#f0c268;border-color:#96672d}
+
+.section{margin-top:20px;padding:18px 22px}
+.section h2{margin:0;color:#efbd5d;font-size:24px;font-family:Georgia,"Microsoft JhengHei",serif}
+.section h3{margin:0 0 12px;color:#e6b151;font-size:18px}
+.section-head{
+  padding-bottom:15px;border-bottom:1px solid #5a3b1a;margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:15px
+}
+.section-head p{margin:5px 0 0;color:#9f907a;font-size:13px}
+.subbox{border:1px solid #3f301f;background:#0a0b0f;padding:15px;margin-top:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{border:1px solid #3f301f;background:#090a0e;padding:12px}
+.card-title{color:#e4ad49;font-weight:700;margin:0 0 10px}
+.field{display:block;margin:0 0 10px}
+.field>span{display:block;color:#c9ad7b;font-size:13px;margin-bottom:6px}
+.hint{color:#81735f;font-size:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.savebar{margin-top:16px}
+.status{color:#96d37b;font-size:13px;min-height:20px}
+
+/* 遊戲介紹：死亡騎士操作方式 */
+.guide-layout{display:grid;grid-template-columns:345px minmax(0,1fr);gap:12px;margin-top:12px}
+.guide-list{border:1px solid #3f301f;background:#090a0e;padding:10px;max-height:520px;overflow:auto}
+.guide-list button{display:block;width:100%;text-align:left;border:1px solid #3b2d1f;background:#0c0d12;color:#dbc69f;padding:10px;margin-bottom:7px}
+.guide-list button.active{border-color:#ad742e;color:#f0c268;background:#17110b}
+.guide-list b,.guide-list small{display:block}
+.guide-list small{color:#81735f;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.editor{border:1px solid #3f301f;background:#090a0e;padding:12px}
+.image-preview{max-width:260px;max-height:160px;object-fit:contain;border:1px solid #3f301f;background:#050505}
+
+/* 公告：左新增、右列表 */
+.news-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(390px,.95fr);gap:34px}
+.news-pane{min-width:0}
+.news-title-row{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #5a3b1a;margin-bottom:14px}
+.news-title-row h3{font-size:22px;margin:0}
+.news-list{display:grid;gap:9px}
+.news-item{
+  width:100%;text-align:left;border:1px solid #4a3826;background:#11131a;color:#e4cfaa;padding:12px 14px
+}
+.news-item:hover,.news-item.active{border-color:#b27a30}
+.news-item-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.news-item b{font-size:17px;color:#e8bc68}
+.news-item small{display:block;color:#8f826e;margin-top:5px}
+.badge{display:inline-block;padding:3px 6px;border:1px solid #735329;color:#d1ae6a;font-size:11px;margin-right:7px}
+.badge.pub{border-color:#285f41;color:#68c490}
+.badge.pin{border-color:#7e5b27;color:#e7b85d}
+.badge.cat-活動{border-color:#47752d;color:#8bd36d}
+.badge.cat-系統{border-color:#6f5429;color:#d0aa58}
+.badge.cat-更新{border-color:#5c3c7d;color:#c394ed}
+.badge.cat-下載{border-color:#2f5f86;color:#7ab8e9}
+
+.inline2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+@media(max-width:1000px){
+  .news-layout,.guide-layout{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .wrap{width:min(100% - 16px,1370px);margin-top:10px}
+  .topbar{align-items:flex-start;flex-direction:column}
+  .grid2,.grid3,.inline2{grid-template-columns:1fr}
+  .news-layout{gap:18px}
+}
 </style>
 </head>
 <body>
-<div id="adminApp">
-<section id="cmsLogin" class="cms-login">
+
+<section id="loginBox" class="login">
   <h1>F4撿骨182</h1>
-  <p>網站內容管理後台</p>
-  <input id="loginUser" autocomplete="username" placeholder="帳號">
-  <input id="loginPass" type="password" autocomplete="current-password" placeholder="密碼">
-  <button id="loginBtn" type="button">登入後台</button>
+  <p>網站管理後台</p>
+  <label class="field"><span>Firebase 管理員 Email</span><input id="loginUser" class="input" autocomplete="username"></label>
+  <label class="field"><span>密碼</span><input id="loginPass" class="input" type="password" autocomplete="current-password"></label>
+  <button id="loginBtn" class="btn gold" style="width:100%">登入後台</button>
   <p id="loginMsg"></p>
-  <a href="../">← 回官方網站</a>
+  <p><a href="../">回前台網站</a></p>
 </section>
 
-<div id="cmsShell" class="cms-shell" hidden>
-  <aside class="cms-side">
-    <h2>F4撿骨182 CMS</h2>
-    <button class="active" data-cms-tab="buttons">網站按鈕設定</button>
-    <button data-cms-tab="guides">遊戲介紹內容管理</button>
-    <button data-cms-tab="rates">遊戲資訊設定</button>
-    <button data-cms-tab="features">遊戲特色管理</button>
-    <button data-cms-tab="news">公告管理</button>
-    <button data-cms-tab="site">首頁文字與樣式</button>
-    <a href="../" target="_blank">開啟前台網站</a>
-    <button id="logoutBtn" type="button">登出</button>
-  </aside>
-
-  <main class="cms-main">
-    <header class="cms-main-head">
-      <h1 id="cmsTitle">網站按鈕設定</h1>
-      <span id="cmsStatus" class="cms-status">已連接 Firebase</span>
+<div id="app" hidden>
+  <div class="wrap">
+    <header class="topbar">
+      <div>
+        <div class="kicker">F4 JIANGU 182</div>
+        <h1>公告管理</h1>
+        <div id="userEmail" class="userline"></div>
+      </div>
+      <div class="top-actions">
+        <a class="btn gold" href="../" target="_blank">查看網站</a>
+        <button id="logoutBtn" class="btn ghost">登出</button>
+      </div>
     </header>
-    <div class="cms-note">操作方式與死亡騎士182相同。公告分類使用下拉選單，發布日期自動帶入台灣當天日期。</div>
-    <div id="cmsMain"></div>
-  </main>
-</div>
+
+    <nav class="quicknav">
+      <button data-jump="buttons">網站按鈕設定</button>
+      <button data-jump="guides">遊戲介紹內容管理</button>
+      <button data-jump="rates">遊戲資訊設定</button>
+      <button data-jump="features">遊戲特色管理</button>
+      <button data-jump="news">公告管理</button>
+      <button data-jump="site">首頁文字與樣式</button>
+    </nav>
+
+    <section id="buttons" class="section">
+      <div class="section-head">
+        <div><h2>網站按鈕設定</h2><p>可修改顯示名稱與前往網址。</p></div>
+        <span id="buttonsStatus" class="status"></span>
+      </div>
+      <div id="buttonsContent"></div>
+      <div class="savebar"><button id="saveButtons" class="btn gold">儲存網站設定</button></div>
+    </section>
+
+    <section id="guides" class="section">
+      <div class="section-head">
+        <div><h2>遊戲介紹內容管理</h2><p>七個分類都可新增多篇內容，每篇皆可獨立編輯、刪除文字與圖片。</p></div>
+        <span id="guidesStatus" class="status"></span>
+      </div>
+      <label class="field" style="max-width:410px"><span>選擇介紹分類</span><select id="guideCategory" class="select"></select></label>
+      <div id="guideContent"></div>
+    </section>
+
+    <section id="rates" class="section">
+      <div class="section-head">
+        <div><h2>遊戲資訊設定</h2><p>修改伺服器倍率。</p></div>
+        <span id="ratesStatus" class="status"></span>
+      </div>
+      <div id="ratesContent"></div>
+      <div class="savebar"><button id="saveRates" class="btn gold">儲存遊戲資訊</button></div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-head">
+        <div><h2>遊戲特色管理</h2><p>修改特色標題、副標與圖片網址。</p></div>
+        <span id="featuresStatus" class="status"></span>
+      </div>
+      <div id="featuresContent"></div>
+      <div class="savebar"><button id="saveFeatures" class="btn gold">儲存遊戲特色</button></div>
+    </section>
+
+    <section id="news" class="section">
+      <div class="section-head">
+        <div><h2>公告管理</h2><p>新增、編輯、置頂、發布與刪除公告。</p></div>
+        <span id="newsStatus" class="status"></span>
+      </div>
+      <div class="news-layout">
+        <div class="news-pane">
+          <div class="news-title-row"><h3 id="newsFormTitle">新增公告</h3><button id="clearNews" class="btn ghost">清空表單</button></div>
+          <div class="inline2">
+            <label class="field"><span>分類</span>
+              <select id="newsCategory" class="select">
+                <option>公告</option><option>活動</option><option>系統</option><option>更新</option><option>下載</option>
+              </select>
+            </label>
+            <label class="field"><span>發布日期</span><input id="newsDate" class="input" readonly></label>
+          </div>
+          <label class="field"><span>標題</span><input id="newsTitle" class="input"></label>
+          <label class="field"><span>摘要</span><textarea id="newsSummary" class="textarea" style="min-height:85px"></textarea></label>
+          <label class="field"><span>完整內容</span><textarea id="newsBody" class="textarea" style="min-height:275px"></textarea></label>
+          <label class="field"><span>圖片網址</span><textarea id="newsImages" class="textarea" style="min-height:90px" placeholder="每行一個 https:// 圖片網址"></textarea></label>
+          <div class="inline2">
+            <label class="field"><span>置頂</span><select id="newsPinned" class="select"><option value="false">否</option><option value="true">是</option></select></label>
+            <label class="field"><span>發布狀態</span><select id="newsVisible" class="select"><option value="true">已發布</option><option value="false">草稿 / 隱藏</option></select></label>
+          </div>
+          <div class="actions">
+            <button id="saveNews" class="btn gold">發布公告</button>
+            <button id="deleteNews" class="btn red" hidden>刪除此公告</button>
+          </div>
+        </div>
+        <div class="news-pane">
+          <div class="news-title-row"><div><h3>公告列表</h3><div class="hint">點擊公告即可編輯</div></div><button id="refreshNews" class="btn ghost">重新整理</button></div>
+          <div id="newsList" class="news-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="site" class="section">
+      <div class="section-head">
+        <div><h2>首頁文字與樣式</h2><p>維持死亡騎士182原本操作方式，只有需要時才修改。</p></div>
+        <span id="siteStatus" class="status"></span>
+      </div>
+      <div id="siteContent"></div>
+      <div class="savebar"><button id="saveSite" class="btn gold">儲存首頁設定</button></div>
+    </section>
+  </div>
 </div>
 
 <script type="module">
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const fmtDate=v=>v?String(v).replaceAll('/','-'):'';
 const todayTW=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const toLines=v=>{
+  if(Array.isArray(v))return v.join('\n');
+  if(typeof v==='string'){
+    try{const a=JSON.parse(v);if(Array.isArray(a))return a.join('\n')}catch(e){}
+    return v;
+  }
+  return '';
+};
+const fromLines=v=>String(v||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
 
 const {initializeApp}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js');
 const {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js');
@@ -98,317 +267,282 @@ const app=initializeApp(window.F4_FIREBASE_CONFIG);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let CMS=null, TAB='buttons', GUIDE_ID='server';
+let S=null;
+let guideId='server';
+let guideEntryId=null;
+let newsEditDocId=null;
 
-function catClass(c){
-  if(c==='置頂')return'tag-pinned';
-  if(c==='活動')return'tag-activity';
-  if(c==='系統')return'tag-system';
-  if(c==='更新')return'tag-update';
-  if(c==='下載')return'tag-download';
-  return'tag-announcement';
-}
 async function readCol(name){
-  const s=await getDocs(collection(db,name));
-  return s.docs.map(d=>({__docId:d.id,...d.data()}));
+  const snap=await getDocs(collection(db,name));
+  return snap.docs.map(d=>({__docId:d.id,...d.data()}));
 }
+function sortRows(a){return a.sort((x,y)=>(Number(x.sort_order||0)-Number(y.sort_order||0))||String(x.id||'').localeCompare(String(y.id||'')))}
 async function loadAll(){
-  const [buttons,rates,guides,news,support,downloads,features]=await Promise.all([
-    readCol('hero_buttons'),readCol('game_rates'),readCol('content_sections'),readCol('announcements'),
-    readCol('support_links'),readCol('download_links'),readCol('game_features')
+  const [hero_buttons,game_rates,content_sections,guide_entries,announcements,support_links,download_links,game_features]=await Promise.all([
+    readCol('hero_buttons'),readCol('game_rates'),readCol('content_sections'),readCol('guide_entries'),
+    readCol('announcements'),readCol('support_links'),readCol('download_links'),readCol('game_features')
   ]);
   const ss=await getDoc(doc(db,'site_settings','main'));
-  const sort=a=>a.sort((x,y)=>(Number(x.sort_order||0)-Number(y.sort_order||0))||String(x.id||'').localeCompare(String(y.id||'')));
   return {
-    site:ss.exists()?ss.data():{},
-    buttons:sort(buttons),
-    rates:sort(rates),
-    guides:sort(guides),
-    news:news.sort((a,b)=>(+!!b.pinned)-(+!!a.pinned)||String(b.published_on||'').localeCompare(String(a.published_on||''))||Number(b.id||0)-Number(a.id||0)),
-    support:sort(support),
-    downloads:sort(downloads),
-    features:sort(features)
+    hero_buttons:sortRows(hero_buttons),
+    game_rates:sortRows(game_rates),
+    content_sections:sortRows(content_sections),
+    guide_entries:sortRows(guide_entries),
+    announcements:announcements.sort((a,b)=>(+!!b.pinned)-(+!!a.pinned)||String(b.published_on||'').localeCompare(String(a.published_on||''))||Number(b.id||0)-Number(a.id||0)),
+    support_links:sortRows(support_links),
+    download_links:sortRows(download_links),
+    game_features:sortRows(game_features),
+    site_settings:ss.exists()?ss.data():{}
   };
 }
-async function saveOne(col,x,id){
-  const data={...x};delete data.__docId;
+async function saveRow(col,row,idOverride){
+  const data={...row}; delete data.__docId;
   data.updated_at=new Date().toISOString();
-  await setDoc(doc(db,col,String(id??x.__docId??x.id)),data,{merge:true});
+  const id=String(idOverride??row.__docId??row.id??Date.now());
+  await setDoc(doc(db,col,id),data,{merge:true});
+  const chk=await getDoc(doc(db,col,id));
+  if(!chk.exists())throw new Error('Firebase 寫入驗證失敗');
+  return id;
 }
-async function saveCurrentTab(){
-  if(TAB==='buttons'){
-    await Promise.all([
-      ...CMS.buttons.map(x=>saveOne('hero_buttons',x)),
-      ...CMS.support.map(x=>saveOne('support_links',x)),
-      ...CMS.downloads.map(x=>saveOne('download_links',x))
-    ]);
-    return;
-  }
-  if(TAB==='guides'){
-    await Promise.all(CMS.guides.map(x=>saveOne('content_sections',x)));
-    return;
-  }
-  if(TAB==='rates'){
-    await Promise.all(CMS.rates.map(x=>saveOne('game_rates',x)));
-    return;
-  }
-  if(TAB==='features'){
-    await Promise.all(CMS.features.map(x=>saveOne('game_features',x)));
-    return;
-  }
-  if(TAB==='news'){
-    await Promise.all(CMS.news.map(x=>saveOne('announcements',x)));
-    return;
-  }
-  if(TAB==='site'){
-    await saveOne('site_settings',CMS.site,'main');
-  }
+async function saveRows(col,rows){
+  for(const row of rows)await saveRow(col,row);
+}
+function setStatus(id,text){const el=$(id);if(el)el.textContent=text||''}
+async function guarded(button,statusId,fn){
+  const b=$(button); if(!b)return;
+  b.disabled=true; setStatus(statusId,'儲存中…');
+  try{await fn();setStatus(statusId,'已儲存，Firebase 已重新讀取確認');}
+  catch(e){console.error(e);setStatus(statusId,'儲存失敗');alert('儲存失敗：'+String(e?.message||e).slice(0,260));}
+  finally{b.disabled=false}
 }
 
-function fld(label,path,value,type='text',wide=false,readonly=false){
-  const base=`data-bind="${esc(path)}"`;
-  let input;
-  if(type==='textarea')input=`<textarea ${base} ${readonly?'readonly':''}>${esc(value)}</textarea>`;
-  else if(type==='color')input=`<input ${base} type="color" value="${esc(value||'#ffffff')}" ${readonly?'disabled':''}>`;
-  else if(type==='number')input=`<input ${base} data-type="number" type="number" value="${esc(value)}" ${readonly?'readonly':''}>`;
-  else if(type==='boolean')input=`<select ${base} data-type="boolean" ${readonly?'disabled':''}><option value="true" ${value?'selected':''}>顯示</option><option value="false" ${!value?'selected':''}>隱藏</option></select>`;
-  else input=`<input ${base} type="text" value="${esc(value)}" ${readonly?'readonly':''}>`;
-  return `<label class="cms-field ${wide?'wide':''}"><span>${label}</span>${input}</label>`;
+function basicCard(title,prefix,i,x,urlLabel='前往網址'){
+  return `<div class="card">
+    <div class="card-title">${esc(title||x.title||'')}</div>
+    <label class="field"><span>顯示名稱</span><input class="input bind" data-path="${prefix}.${i}.title" value="${esc(x.title||'')}"></label>
+    <label class="field"><span>${urlLabel}</span><input class="input bind" data-path="${prefix}.${i}.url" value="${esc(x.url||'')}"></label>
+  </div>`;
 }
-
-function categoryFld(path,value){
-  const options=['公告','活動','系統','更新','下載'];
-  return `<label class="cms-field"><span>分類</span><select data-bind="${esc(path)}">${
-    options.map(o=>`<option value="${o}" ${value===o?'selected':''}>${o}</option>`).join('')
-  }</select></label>`;
-}
-
 function setPath(path,val){
-  const keys=path.split('.');
-  let o=CMS;
-  for(let i=0;i<keys.length-1;i++){
-    const k=/^\d+$/.test(keys[i])?Number(keys[i]):keys[i];
-    o=o[k];
-  }
-  const last=/^\d+$/.test(keys.at(-1))?Number(keys.at(-1)):keys.at(-1);
-  o[last]=val;
+  const a=path.split('.');let o=S;
+  for(let i=0;i<a.length-1;i++)o=o[/^\d+$/.test(a[i])?Number(a[i]):a[i]];
+  o[/^\d+$/.test(a.at(-1))?Number(a.at(-1)):a.at(-1)]=val;
 }
-function syncCMS(){
-  $$('[data-bind]').forEach(el=>{
-    if(el.disabled||el.readOnly)return;
+function syncBinds(root=document){
+  $$('.bind',root).forEach(el=>{
     let v=el.value;
     if(el.dataset.type==='number')v=Number(v);
-    if(el.dataset.type==='boolean')v=v==='true';
-    setPath(el.dataset.bind,v);
+    if(el.dataset.type==='bool')v=v==='true';
+    setPath(el.dataset.path,v);
   });
 }
-function saveButton(){return '<button class="cms-save" type="button">儲存設定</button>'}
-function bindSave(){
-  const b=$('.cms-save');
-  if(b)b.onclick=async()=>{
-    syncCMS();
-    const status=$('#cmsStatus');
-    status.textContent='儲存中…';
-    b.disabled=true;
-    try{
-      await saveCurrentTab();
-      CMS=await loadAll();
-      renderTab();
-      $('#cmsStatus').textContent='已儲存，並已從 Firebase 重新讀取確認';
-    }catch(e){
-      console.error(e);
-      status.textContent='儲存失敗';
-      alert('儲存失敗：'+String(e?.message||e).slice(0,260));
-    }finally{
-      const nb=$('.cms-save');
-      if(nb)nb.disabled=false;
-    }
-  };
-}
 
-/* 死亡騎士182：網站按鈕設定 = 上方主按鈕 + 客服與支持 + 下載專區，集中在同一頁 */
+/* 網站按鈕 */
 function renderButtons(){
-  const blocks=[['上方主按鈕',CMS.buttons],['下方客服與支持',CMS.support],['下載專區',CMS.downloads]];
-  $('#cmsMain').innerHTML=blocks.map(([title,arr])=>`<section class="cms-card"><h2>${title}</h2>${
-    arr.map((x,i)=>{
-      const prefix=title==='上方主按鈕'?'buttons':title==='下方客服與支持'?'support':'downloads';
-      return `<div class="cms-subcard"><div class="cms-grid">
-        ${fld('顯示名稱',`${prefix}.${i}.title`,x.title)}
-        ${fld('英文副標',`${prefix}.${i}.subtitle`,x.subtitle)}
-        ${fld('連結網址',`${prefix}.${i}.url`,x.url,'text',true)}
-        ${fld('標題大小',`${prefix}.${i}.title_size`,x.title_size,'number')}
-        ${fld('標題顏色',`${prefix}.${i}.title_color`,x.title_color,'color')}
-        ${fld('副標大小',`${prefix}.${i}.subtitle_size`,x.subtitle_size,'number')}
-        ${fld('副標顏色',`${prefix}.${i}.subtitle_color`,x.subtitle_color,'color')}
-        ${fld('顯示狀態',`${prefix}.${i}.visible`,x.visible,'boolean')}
-      </div></div>`;
-    }).join('')
-  }</section>`).join('')+saveButton();
-  bindSave();
+  const hero=S.hero_buttons, support=S.support_links, downloads=S.download_links;
+  $('#buttonsContent').innerHTML=`
+    <div class="subbox"><h3>上方主按鈕</h3><div class="grid2">${hero.map((x,i)=>basicCard(x.title,'hero_buttons',i,x)).join('')}</div></div>
+    <div class="subbox"><h3>下方客服與支持</h3><div class="grid2">${support.map((x,i)=>basicCard(x.title,'support_links',i,x)).join('')}</div></div>
+    <div class="subbox"><h3>最下方下載專區</h3><div class="grid2">${downloads.map((x,i)=>basicCard(x.title,'download_links',i,x,'前往網址')).join('')}</div></div>`;
 }
-function renderSite(){
-  const s=CMS.site;
-  $('#cmsMain').innerHTML=`<section class="cms-card"><h2>首頁文字與樣式</h2><div class="cms-grid">
-    ${fld('網站名稱','site.brand',s.brand)}
-    ${fld('首頁主標題','site.hero_title',s.hero_title)}
-    ${fld('主標題大小','site.hero_title_size',s.hero_title_size,'number')}
-    ${fld('主標題顏色','site.hero_title_color',s.hero_title_color,'color')}
-    ${fld('副標題','site.hero_kicker',s.hero_kicker)}
-    ${fld('副標題大小','site.hero_kicker_size',s.hero_kicker_size,'number')}
-    ${fld('副標題顏色','site.hero_kicker_color',s.hero_kicker_color,'color')}
-    ${fld('回憶文案','site.hero_slogan',s.hero_slogan,'textarea',true)}
-    ${fld('文案大小','site.hero_slogan_size',s.hero_slogan_size,'number')}
-    ${fld('文案顏色','site.hero_slogan_color',s.hero_slogan_color,'color')}
-    ${fld('區塊標題大小','site.section_title_size',s.section_title_size,'number')}
-    ${fld('區塊標題顏色','site.section_title_color',s.section_title_color,'color')}
-    ${fld('頁尾文字','site.footer_text',s.footer_text,'text',true)}
-    ${fld('頁尾大小','site.footer_size',s.footer_size,'number')}
-    ${fld('頁尾顏色','site.footer_color',s.footer_color,'color')}
-  </div></section>${saveButton()}`;
-  bindSave();
-}
-function renderRates(){
-  $('#cmsMain').innerHTML=`<section class="cms-card"><h2>遊戲資訊設定</h2>${
-    CMS.rates.map((x,i)=>`<div class="cms-subcard"><div class="cms-grid">
-      ${fld('名稱',`rates.${i}.label`,x.label)}
-      ${fld('倍率',`rates.${i}.value`,x.value,'number')}
-      ${fld('名稱大小',`rates.${i}.label_size`,x.label_size,'number')}
-      ${fld('名稱顏色',`rates.${i}.label_color`,x.label_color,'color')}
-      ${fld('數字大小',`rates.${i}.value_size`,x.value_size,'number')}
-      ${fld('數字顏色',`rates.${i}.value_color`,x.value_color,'color')}
-    </div></div>`).join('')
-  }</section>${saveButton()}`;
-  bindSave();
-}
-function renderGuides(){
-  const idx=Math.max(0,CMS.guides.findIndex(g=>g.id===GUIDE_ID));
-  const g=CMS.guides[idx];
-  if(!g){$('#cmsMain').innerHTML='<section class="cms-card">目前沒有遊戲介紹資料</section>';return}
-  $('#cmsMain').innerHTML=`<section class="cms-card"><h2>遊戲介紹內容管理</h2>
-    <div class="cms-tabs">${CMS.guides.map(x=>`<button type="button" data-guide-tab="${esc(x.id)}" class="${x.id===g.id?'active':''}">${esc(x.title)}</button>`).join('')}</div>
-    <div class="cms-grid">
-      ${fld('分類標題',`guides.${idx}.title`,g.title)}
-      ${fld('首頁摘要',`guides.${idx}.summary`,g.summary)}
-      ${fld('完整內容',`guides.${idx}.body`,g.body,'textarea',true)}
-      ${fld('圖片網址',`guides.${idx}.image_url`,g.image_url,'text',true)}
-      ${fld('標題大小',`guides.${idx}.title_size`,g.title_size,'number')}
-      ${fld('標題顏色',`guides.${idx}.title_color`,g.title_color,'color')}
-      ${fld('摘要大小',`guides.${idx}.summary_size`,g.summary_size,'number')}
-      ${fld('摘要顏色',`guides.${idx}.summary_color`,g.summary_color,'color')}
-      ${fld('內文大小',`guides.${idx}.body_size`,g.body_size,'number')}
-      ${fld('內文顏色',`guides.${idx}.body_color`,g.body_color,'color')}
-      ${fld('顯示狀態',`guides.${idx}.visible`,g.visible,'boolean')}
-    </div>
-  </section>${saveButton()}`;
-  $$('[data-guide-tab]').forEach(b=>b.onclick=()=>{syncCMS();GUIDE_ID=b.dataset.guideTab;renderGuides()});
-  bindSave();
-}
-function renderFeatures(){
-  $('#cmsMain').innerHTML=`<section class="cms-card"><h2>遊戲特色</h2>${
-    CMS.features.map((x,i)=>`<div class="cms-subcard"><div class="cms-grid">
-      ${fld('標題',`features.${i}.title`,x.title)}
-      ${fld('副標',`features.${i}.subtitle`,x.subtitle)}
-      ${fld('圖片網址',`features.${i}.image_url`,x.image_url,'text',true)}
-      ${fld('標題大小',`features.${i}.title_size`,x.title_size,'number')}
-      ${fld('標題顏色',`features.${i}.title_color`,x.title_color,'color')}
-      ${fld('副標大小',`features.${i}.subtitle_size`,x.subtitle_size,'number')}
-      ${fld('副標顏色',`features.${i}.subtitle_color`,x.subtitle_color,'color')}
-      ${fld('顯示狀態',`features.${i}.visible`,x.visible,'boolean')}
-    </div></div>`).join('')
-  }</section>${saveButton()}`;
-  bindSave();
-}
-function renderNewsAdmin(){
-  $('#cmsMain').innerHTML=`<section class="cms-card">
-    <div class="cms-card-head"><h2>公告管理</h2><button id="addNews" type="button">＋ 新增公告</button></div>
-    ${CMS.news.map((n,i)=>`<details class="cms-ann">
-      <summary><span class="tag ${catClass(n.category)}">${esc(n.category)}</span> ${esc(n.title)} <small>${fmtDate(n.published_on)}</small></summary>
-      <div class="cms-grid">
-        ${categoryFld(`news.${i}.category`,n.category)}
-        ${fld('發布日期',`news.${i}.published_on`,n.published_on,'text',false,true)}
-        ${fld('標題',`news.${i}.title`,n.title,'text',true)}
-        ${fld('首頁摘要',`news.${i}.summary`,n.summary,'textarea',true)}
-        ${fld('完整內容',`news.${i}.body`,n.body,'textarea',true)}
-        ${fld('圖片網址',`news.${i}.image_url`,n.image_url,'text',true)}
-        ${fld('標題大小',`news.${i}.title_size`,n.title_size,'number')}
-        ${fld('標題顏色',`news.${i}.title_color`,n.title_color,'color')}
-        ${fld('摘要大小',`news.${i}.summary_size`,n.summary_size,'number')}
-        ${fld('摘要顏色',`news.${i}.summary_color`,n.summary_color,'color')}
-        ${fld('內文大小',`news.${i}.body_size`,n.body_size,'number')}
-        ${fld('內文顏色',`news.${i}.body_color`,n.body_color,'color')}
-        ${fld('置頂',`news.${i}.pinned`,n.pinned,'boolean')}
-        ${fld('發布/隱藏',`news.${i}.visible`,n.visible,'boolean')}
-      </div>
-      <button class="cms-delete" type="button" data-delete-news="${n.id}">刪除此公告</button>
-    </details>`).join('')}
-  </section>${saveButton()}`;
+$('#saveButtons').onclick=()=>guarded('#saveButtons','#buttonsStatus',async()=>{
+  syncBinds($('#buttons'));
+  await Promise.all([
+    saveRows('hero_buttons',S.hero_buttons),
+    saveRows('support_links',S.support_links),
+    saveRows('download_links',S.download_links)
+  ]);
+  S=await loadAll();renderButtons();
+});
 
-  $('#addNews').onclick=()=>{
-    syncCMS();
-    CMS.news.unshift({
-      id:Date.now(),
-      category:'公告',
-      title:'新公告',
-      summary:'',
-      body:'',
-      image_url:'',
-      published_on:todayTW(),
-      pinned:false,
-      visible:true,
-      title_size:22,title_color:'#e7bd66',
-      summary_size:14,summary_color:'#a8926a',
-      body_size:16,body_color:'#ddc89e'
-    });
-    renderNewsAdmin();
+/* 遊戲介紹 */
+function guideEntries(){
+  return S.guide_entries.filter(x=>String(x.category_id||x.section_id||'')===String(guideId))
+    .sort((a,b)=>(Number(a.sort_order||0)-Number(b.sort_order||0))||Number(a.id||0)-Number(b.id||0));
+}
+function renderGuideCategory(){
+  $('#guideCategory').innerHTML=S.content_sections.map(x=>`<option value="${esc(x.id)}"${String(x.id)===String(guideId)?' selected':''}>${esc(x.title)}</option>`).join('');
+  renderGuideArea();
+}
+function renderGuideArea(){
+  const entries=guideEntries();
+  if(guideEntryId==null || !entries.some(x=>String(x.__docId??x.id)===String(guideEntryId)))guideEntryId=entries[0]?.__docId??entries[0]?.id??null;
+  const entry=entries.find(x=>String(x.__docId??x.id)===String(guideEntryId))||null;
+  $('#guideContent').innerHTML=`
+    <div class="guide-layout">
+      <div class="guide-list">
+        <button id="addGuideEntry" class="btn gold" style="text-align:center">＋ 新增內容</button>
+        ${entries.map(x=>`<button data-guide-entry="${esc(x.__docId??x.id)}" class="${String(x.__docId??x.id)===String(guideEntryId)?'active':''}">
+          <b>${esc(x.title||'未命名內容')}</b><small>${esc(x.intro||x.summary||'')}</small>
+        </button>`).join('')||'<div class="hint" style="padding:12px">這個分類目前沒有內容。</div>'}
+      </div>
+      <div class="editor">
+        <h3>編輯內容</h3>
+        ${entry?`
+          <label class="field"><span>內容標題</span><input id="geTitle" class="input" value="${esc(entry.title||'')}"></label>
+          <label class="field"><span>簡短介紹</span><input id="geIntro" class="input" value="${esc(entry.intro||entry.summary||'')}"></label>
+          <label class="field"><span>完整文字內容</span><textarea id="geContent" class="textarea" style="min-height:280px">${esc(entry.content||entry.body||'')}</textarea></label>
+          <label class="field"><span>內容圖片網址</span><textarea id="geImages" class="textarea" style="min-height:95px">${esc(toLines(entry.images??entry.image_urls??entry.image_url))}</textarea></label>
+          <div class="actions">
+            <button id="saveGuideEntry" class="btn gold">儲存這篇內容</button>
+            <button id="deleteGuideEntry" class="btn red">刪除這篇內容</button>
+          </div>`:'<div class="hint">請先新增或選擇一篇內容。</div>'}
+      </div>
+    </div>`;
+  $$('[data-guide-entry]').forEach(b=>b.onclick=()=>{guideEntryId=b.dataset.guideEntry;renderGuideArea()});
+  $('#addGuideEntry').onclick=()=>{
+    const temp=String(Date.now());
+    S.guide_entries.push({__docId:temp,id:Number(temp),category_id:guideId,title:'新增內容',intro:'',content:'',images:[],sort_order:entries.length+1,visible:true});
+    guideEntryId=temp;renderGuideArea();
   };
-  $$('[data-delete-news]').forEach(b=>b.onclick=async()=>{
-    if(!confirm('確定刪除此公告？'))return;
-    syncCMS();
-    const n=CMS.news.find(n=>String(n.id)===b.dataset.deleteNews);
-    if(n?.__docId||n?.id) await deleteDoc(doc(db,'announcements',String(n.__docId??n.id)));
-    CMS.news=CMS.news.filter(n=>String(n.id)!==b.dataset.deleteNews);
-    renderNewsAdmin();
+  const save=$('#saveGuideEntry');
+  if(save)save.onclick=()=>guarded('#saveGuideEntry','#guidesStatus',async()=>{
+    const e=S.guide_entries.find(x=>String(x.__docId??x.id)===String(guideEntryId));
+    e.title=$('#geTitle').value.trim();
+    e.intro=$('#geIntro').value.trim();
+    e.content=$('#geContent').value;
+    e.images=fromLines($('#geImages').value);
+    e.category_id=guideId;
+    const id=await saveRow('guide_entries',e,e.__docId??e.id);
+    e.__docId=id;
+    S=await loadAll();guideEntryId=id;renderGuideCategory();
   });
-  bindSave();
+  const del=$('#deleteGuideEntry');
+  if(del)del.onclick=async()=>{
+    if(!confirm('確定刪除這篇內容？'))return;
+    const e=S.guide_entries.find(x=>String(x.__docId??x.id)===String(guideEntryId));
+    try{
+      await deleteDoc(doc(db,'guide_entries',String(e.__docId??e.id)));
+      S=await loadAll();guideEntryId=null;renderGuideCategory();setStatus('#guidesStatus','已刪除');
+    }catch(err){alert('刪除失敗：'+String(err?.message||err));}
+  };
 }
-function renderTab(){
-  const title={buttons:'網站按鈕設定',guides:'遊戲介紹內容管理',rates:'遊戲資訊設定',site:'首頁文字樣式',features:'遊戲特色管理',news:'公告管理'}[TAB];
-  $('#cmsTitle').textContent=title;
-  $$('[data-cms-tab]').forEach(b=>b.classList.toggle('active',b.dataset.cmsTab===TAB));
-  if(TAB==='buttons')renderButtons();
-  if(TAB==='guides')renderGuides();
-  if(TAB==='rates')renderRates();
-  if(TAB==='site')renderSite();
-  if(TAB==='features')renderFeatures();
-  if(TAB==='news')renderNewsAdmin();
+$('#guideCategory').onchange=()=>{guideId=$('#guideCategory').value;guideEntryId=null;renderGuideArea()};
+
+/* 遊戲資訊 */
+function renderRates(){
+  $('#ratesContent').innerHTML=`<div class="grid3">${S.game_rates.map((x,i)=>`<div class="card">
+    <div class="card-title">${esc(x.label||'倍率')}</div>
+    <label class="field"><span>名稱</span><input class="input bind" data-path="game_rates.${i}.label" value="${esc(x.label||'')}"></label>
+    <label class="field"><span>倍率</span><input class="input bind" data-type="number" data-path="game_rates.${i}.value" type="number" value="${esc(x.value??1)}"></label>
+  </div>`).join('')}</div>`;
 }
-async function enterCMS(){
-  CMS=await loadAll();
-  $('#cmsLogin').hidden=true;
-  $('#cmsShell').hidden=false;
-  $$('[data-cms-tab]').forEach(b=>b.onclick=()=>{syncCMS();TAB=b.dataset.cmsTab;renderTab()});
-  renderTab();
+$('#saveRates').onclick=()=>guarded('#saveRates','#ratesStatus',async()=>{
+  syncBinds($('#rates'));await saveRows('game_rates',S.game_rates);S=await loadAll();renderRates();
+});
+
+/* 遊戲特色 */
+function renderFeatures(){
+  $('#featuresContent').innerHTML=`<div class="grid2">${S.game_features.map((x,i)=>`<div class="card">
+    <div class="card-title">${esc(x.title||'遊戲特色')}</div>
+    <label class="field"><span>標題</span><input class="input bind" data-path="game_features.${i}.title" value="${esc(x.title||'')}"></label>
+    <label class="field"><span>副標</span><input class="input bind" data-path="game_features.${i}.subtitle" value="${esc(x.subtitle||'')}"></label>
+    <label class="field"><span>圖片網址</span><input class="input bind" data-path="game_features.${i}.image_url" value="${esc(x.image_url||'')}"></label>
+  </div>`).join('')}</div>`;
+}
+$('#saveFeatures').onclick=()=>guarded('#saveFeatures','#featuresStatus',async()=>{
+  syncBinds($('#features'));await saveRows('game_features',S.game_features);S=await loadAll();renderFeatures();
+});
+
+/* 公告 */
+function clearNewsForm(){
+  newsEditDocId=null;
+  $('#newsFormTitle').textContent='新增公告';
+  $('#newsCategory').value='公告';$('#newsDate').value=todayTW();$('#newsTitle').value='';
+  $('#newsSummary').value='';$('#newsBody').value='';$('#newsImages').value='';
+  $('#newsPinned').value='false';$('#newsVisible').value='true';
+  $('#saveNews').textContent='發布公告';$('#deleteNews').hidden=true;
+  $$('.news-item').forEach(x=>x.classList.remove('active'));
+}
+function loadNewsForm(n){
+  newsEditDocId=String(n.__docId??n.id);
+  $('#newsFormTitle').textContent='編輯公告';
+  $('#newsCategory').value=n.category||'公告';
+  $('#newsDate').value=n.published_on||todayTW();
+  $('#newsTitle').value=n.title||'';$('#newsSummary').value=n.summary||'';
+  $('#newsBody').value=n.body||'';$('#newsImages').value=toLines(n.images??n.image_urls??n.image_url);
+  $('#newsPinned').value=String(!!n.pinned);$('#newsVisible').value=String(n.visible!==false);
+  $('#saveNews').textContent='儲存公告';$('#deleteNews').hidden=false;
+  $$('.news-item').forEach(x=>x.classList.toggle('active',x.dataset.newsId===newsEditDocId));
+}
+function renderNewsList(){
+  $('#newsList').innerHTML=S.announcements.map(n=>`<button class="news-item" data-news-id="${esc(n.__docId??n.id)}">
+    <div class="news-item-top">
+      <span><span class="badge cat-${esc(n.category||'公告')}">${esc(n.category||'公告')}</span>${n.pinned?'<span class="badge pin">置頂</span>':''}<b>${esc(n.title||'未命名公告')}</b></span>
+      <span class="badge ${n.visible!==false?'pub':''}">${n.visible!==false?'已發布':'草稿'}</span>
+    </div>
+    <small>${esc(n.category||'公告')} · ${esc(n.published_on||'')}</small>
+  </button>`).join('')||'<div class="hint">目前沒有公告。</div>';
+  $$('[data-news-id]').forEach(b=>b.onclick=()=>{
+    const n=S.announcements.find(x=>String(x.__docId??x.id)===b.dataset.newsId);
+    if(n)loadNewsForm(n);
+  });
+}
+$('#clearNews').onclick=clearNewsForm;
+$('#refreshNews').onclick=async()=>{S=await loadAll();renderNewsList();clearNewsForm();setStatus('#newsStatus','已重新整理')};
+$('#saveNews').onclick=()=>guarded('#saveNews','#newsStatus',async()=>{
+  const existing=newsEditDocId?S.announcements.find(x=>String(x.__docId??x.id)===newsEditDocId):null;
+  const id=newsEditDocId||String(Date.now());
+  const row={
+    ...(existing||{}),__docId:id,id:existing?.id??Number(id),
+    category:$('#newsCategory').value,
+    published_on:existing?.published_on||$('#newsDate').value||todayTW(),
+    title:$('#newsTitle').value.trim(),
+    summary:$('#newsSummary').value,
+    body:$('#newsBody').value,
+    image_url:fromLines($('#newsImages').value)[0]||'',
+    images:fromLines($('#newsImages').value),
+    pinned:$('#newsPinned').value==='true',
+    visible:$('#newsVisible').value==='true',
+    title_size:existing?.title_size??22,title_color:existing?.title_color??'#e7bd66',
+    summary_size:existing?.summary_size??14,summary_color:existing?.summary_color??'#a8926a',
+    body_size:existing?.body_size??16,body_color:existing?.body_color??'#ddc89e'
+  };
+  await saveRow('announcements',row,id);
+  S=await loadAll();renderNewsList();clearNewsForm();
+});
+$('#deleteNews').onclick=async()=>{
+  if(!newsEditDocId||!confirm('確定刪除此公告？'))return;
+  try{
+    await deleteDoc(doc(db,'announcements',newsEditDocId));
+    S=await loadAll();renderNewsList();clearNewsForm();setStatus('#newsStatus','已刪除公告');
+  }catch(e){alert('刪除失敗：'+String(e?.message||e));}
+};
+
+/* 首頁 */
+function renderSite(){
+  const s=S.site_settings||{};
+  $('#siteContent').innerHTML=`<div class="grid2">
+    <label class="field"><span>網站名稱</span><input id="siteBrand" class="input" value="${esc(s.brand||'F4撿骨182')}"></label>
+    <label class="field"><span>首頁主標題</span><input id="siteHero" class="input" value="${esc(s.hero_title||'F4撿骨182')}"></label>
+    <label class="field"><span>副標題</span><input id="siteKicker" class="input" value="${esc(s.hero_kicker||'')}"></label>
+    <label class="field"><span>回憶文案</span><input id="siteSlogan" class="input" value="${esc(s.hero_slogan||'')}"></label>
+    <label class="field" style="grid-column:1/-1"><span>頁尾文字</span><input id="siteFooter" class="input" value="${esc(s.footer_text||'')}"></label>
+  </div>`;
+}
+$('#saveSite').onclick=()=>guarded('#saveSite','#siteStatus',async()=>{
+  const s={...S.site_settings,brand:$('#siteBrand').value,hero_title:$('#siteHero').value,hero_kicker:$('#siteKicker').value,hero_slogan:$('#siteSlogan').value,footer_text:$('#siteFooter').value};
+  await saveRow('site_settings',s,'main');S=await loadAll();renderSite();
+});
+
+$$('[data-jump]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'}));
+
+async function enter(user){
+  setStatus('#buttonsStatus','讀取資料…');
+  S=await loadAll();
+  $('#loginBox').hidden=true;$('#app').hidden=false;$('#userEmail').textContent=user.email||'';
+  renderButtons();renderGuideCategory();renderRates();renderFeatures();renderNewsList();renderSite();clearNewsForm();
+  setStatus('#buttonsStatus','');
 }
 $('#loginBtn').onclick=async()=>{
-  const u=$('#loginUser').value.trim();
-  const p=$('#loginPass').value;
   $('#loginMsg').textContent='驗證中…';
-  try{
-    await signInWithEmailAndPassword(auth,u,p);
-    $('#loginMsg').textContent='';
-  }catch(e){
-    console.error(e);
-    $('#loginMsg').textContent='帳號或密碼錯誤';
-  }
+  try{await signInWithEmailAndPassword(auth,$('#loginUser').value.trim(),$('#loginPass').value);$('#loginMsg').textContent='';}
+  catch(e){console.error(e);$('#loginMsg').textContent='帳號或密碼錯誤';}
 };
 $('#logoutBtn').onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{
-  if(user){
-    try{await enterCMS()}catch(e){console.error(e);$('#loginMsg').textContent='資料讀取失敗'}
-  }else{
-    $('#cmsLogin').hidden=false;
-    $('#cmsShell').hidden=true;
-  }
+  if(user){try{await enter(user)}catch(e){console.error(e);$('#loginMsg').textContent='Firebase 資料讀取失敗';}}
+  else{$('#app').hidden=true;$('#loginBox').hidden=false;}
 });
 </script>
 </body>
