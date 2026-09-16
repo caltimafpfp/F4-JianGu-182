@@ -6,112 +6,159 @@
 <title>最新公告｜F4撿骨182</title>
 <script src="firebase-config.js"></script>
 <style>
+
 *{box-sizing:border-box}
 html{background:#050207}
 body{
   margin:0;
   min-height:100vh;
   background:
-    radial-gradient(circle at 50% -20%,#18091c 0,#0a050e 42%,#050207 78%),
-    #050207;
-  color:#e8dcc9;
-  font-family:"Microsoft JhengHei",serif;
+    radial-gradient(circle at 50% -10%,rgba(67,18,70,.22),transparent 42%),
+    linear-gradient(180deg,#070208 0%,#030104 100%);
+  color:#f1e6d4;
+  font-family:"Microsoft JhengHei","Noto Serif TC",serif;
 }
 a{color:inherit;text-decoration:none}
-.page{width:min(900px,calc(100% - 30px));margin:0 auto;padding:10px 0 70px}
+.page{
+  width:min(1040px,calc(100% - 36px));
+  margin:0 auto;
+  padding:10px 0 72px;
+}
 .article{
   position:relative;
-  min-height:88vh;
-  padding:52px 54px 64px;
-  background:#0a0d14;
-  border-left:1px solid #9a6624;
-  border-right:1px solid #9a6624;
-  box-shadow:0 0 70px rgba(0,0,0,.45);
+  min-height:calc(100vh - 20px);
+  padding:54px 58px 72px;
+  background:
+    linear-gradient(180deg,rgba(15,18,27,.98),rgba(9,11,18,.99));
+  border-left:1px solid #9f6c28;
+  border-right:1px solid #9f6c28;
+  border-top:1px solid #9f6c28;
+  box-shadow:
+    0 0 0 1px rgba(255,190,79,.03) inset,
+    0 30px 90px rgba(0,0,0,.45);
 }
 .article:before,.article:after{
   content:"";
   position:absolute;
-  top:0;
-  width:12px;height:12px;
+  top:-7px;
+  width:13px;height:13px;
   background:#efb84c;
   transform:rotate(45deg);
+  box-shadow:0 0 12px rgba(239,184,76,.18);
 }
-.article:before{left:-6px}
-.article:after{right:-6px}
+.article:before{left:-7px}
+.article:after{right:-7px}
+
 .topline{
   display:flex;
   align-items:center;
-  gap:13px;
-  margin-bottom:28px;
-  color:#c7ab78;
-  font-size:13px;
+  gap:14px;
+  margin-bottom:24px;
+  color:#d3b681;
+  font-size:14px;
 }
 .tag{
-  display:inline-block;
-  min-width:42px;
-  padding:4px 9px;
-  text-align:center;
-  border:1px solid #a86e25;
-  color:#efc067;
-  background:#101114;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:46px;
+  height:28px;
+  padding:0 10px;
+  border:1px solid #a66f27;
+  color:#f2c369;
+  background:#0e0d0b;
+  box-shadow:0 0 0 1px rgba(255,190,79,.05) inset;
 }
+.date{letter-spacing:.02em}
+
 .title{
-  margin:0 0 26px;
-  font-family:Georgia,"Microsoft JhengHei",serif;
-  font-size:42px;
-  line-height:1.3;
-  color:#f1c76e;
+  margin:0 0 24px;
+  font-family:Georgia,"Microsoft JhengHei","Noto Serif TC",serif;
+  font-size:48px !important;
+  line-height:1.28;
+  letter-spacing:.02em;
+  color:#f0c36b !important;
   font-weight:700;
+  text-shadow:0 2px 18px rgba(235,174,72,.08);
 }
 .summary{
   margin:0 0 34px;
-  font-size:16px;
-  line-height:1.85;
-  color:#e9dfce;
+  padding-bottom:24px;
+  border-bottom:1px solid rgba(166,111,39,.25);
+  font-size:18px !important;
+  line-height:1.95;
+  color:#efe4d0 !important;
 }
 .body{
   white-space:pre-wrap;
-  font-size:16px;
-  line-height:1.9;
-  color:#f0e6d4;
+  font-size:18px !important;
+  line-height:2;
+  color:#f3e8d5 !important;
+  letter-spacing:.01em;
+}
+.body:empty{display:none}
+
+.images{
+  margin-top:26px;
 }
 .images img{
   display:block;
   max-width:100%;
   height:auto;
-  margin:24px auto 0;
-  border:1px solid #60451f;
+  margin:26px auto 0;
+  border:1px solid #6b4a20;
+  box-shadow:0 16px 40px rgba(0,0,0,.28);
 }
+
 .back{
   position:fixed;
   right:28px;
   bottom:28px;
-  padding:10px 16px;
-  border:1px solid #936329;
-  background:#121217;
-  color:#e7bb61;
+  min-width:112px;
+  height:42px;
+  padding:0 18px;
+  border:1px solid #9a6827;
+  background:linear-gradient(180deg,#19140d,#100d0a);
+  color:#eec16b;
   cursor:pointer;
   z-index:5;
+  box-shadow:0 10px 28px rgba(0,0,0,.3);
 }
+.back:hover{
+  border-color:#d49735;
+  color:#ffd783;
+}
+
 .loading{
   min-height:70vh;
   display:grid;
   place-items:center;
-  color:#c8a96d;
+  color:#d4b16c;
+  font-size:18px;
 }
 .error{
-  padding:60px 20px;
+  min-height:55vh;
+  display:grid;
+  place-items:center;
   text-align:center;
   color:#e6c27b;
 }
-@media(max-width:700px){
+
+@media(max-width:760px){
   .page{width:100%;padding:0}
-  .article{padding:34px 22px 60px;border-left:0;border-right:0}
+  .article{
+    min-height:100vh;
+    padding:34px 22px 70px;
+    border-left:0;
+    border-right:0;
+  }
   .article:before,.article:after{display:none}
-  .title{font-size:30px}
-  .summary,.body{font-size:15px}
-  .back{right:16px;bottom:16px}
+  .title{font-size:34px !important}
+  .summary{font-size:16px !important}
+  .body{font-size:16px !important}
+  .back{right:14px;bottom:14px;min-width:96px}
 }
+
 </style>
 </head>
 <body>
@@ -168,11 +215,11 @@ try{
   app.innerHTML=`
     <div class="topline">
       <span class="tag">${esc(n.category||'公告')}</span>
-      <span>${esc((n.published_on||'').replaceAll('-','/'))}</span>
+      <span class="date">${esc((n.published_on||'').replaceAll('-','/'))}</span>
     </div>
-    <h1 class="title" style="font-size:${px(n.title_size,42)}px;color:${co(n.title_color,'#f1c76e')}">${esc(n.title||'未命名公告')}</h1>
-    ${n.summary?`<p class="summary" style="font-size:${px(n.summary_size,16)}px;color:${co(n.summary_color,'#e9dfce')}">${esc(n.summary)}</p>`:''}
-    <div class="body" style="font-size:${px(n.body_size,16)}px;color:${co(n.body_color,'#f0e6d4')}">${esc(n.body||'')}</div>
+    <h1 class="title">${esc(n.title||'未命名公告')}</h1>
+    ${n.summary?`<p class="summary">${esc(n.summary)}</p>`:''}
+    <div class="body">${esc(n.body||'')}</div>
     <div class="images">${imgs.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>
   `;
 }catch(err){
