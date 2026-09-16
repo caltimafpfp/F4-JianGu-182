@@ -4,178 +4,185 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>最新公告｜F4撿骨182</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="firebase-config.js"></script>
 <style>
-
+:root{
+  --bg:#050507;
+  --panel:#090a0f;
+  --gold:#d19a3a;
+  --light:#ffd98b;
+  --line:#765127;
+  --text:#f8edda;
+  --muted:#b9ad9b;
+}
 *{box-sizing:border-box}
-html{background:#050207}
+html{background:#050507}
 body{
   margin:0;
-  min-height:100vh;
   background:
-    radial-gradient(circle at 50% -10%,rgba(67,18,70,.22),transparent 42%),
-    linear-gradient(180deg,#070208 0%,#030104 100%);
-  color:#f1e6d4;
-  font-family:"Microsoft JhengHei","Noto Serif TC",serif;
+    radial-gradient(circle at 50% -20%,rgba(69,19,70,.18),transparent 46%),
+    #050507;
+  color:var(--text);
+  font-family:"Noto Serif TC","Microsoft JhengHei",serif;
 }
+button{font:inherit}
 a{color:inherit;text-decoration:none}
+
+/* 直接沿用死亡騎士182母版的公告配色與元件 */
+.tag{
+  padding:4px 7px;
+  border-radius:2px;
+  color:#fff;
+  text-align:center;
+  font-size:11px;
+}
+.tag-pinned{background:#8d3428}
+.tag-activity{background:#386e14}
+.tag-announcement{background:#a13b29}
+.tag-system{background:#76511e}
+.tag-update{background:#6f2798}
+.tag-download{background:#245b8f}
+
 .page{
-  width:min(1040px,calc(100% - 36px));
+  width:min(900px,94vw);
+  min-height:100vh;
   margin:0 auto;
-  padding:10px 0 72px;
+  padding:10px 0 70px;
 }
 .article{
   position:relative;
   min-height:calc(100vh - 20px);
-  padding:54px 58px 72px;
-  background:
-    linear-gradient(180deg,rgba(15,18,27,.98),rgba(9,11,18,.99));
-  border-left:1px solid #9f6c28;
-  border-right:1px solid #9f6c28;
-  border-top:1px solid #9f6c28;
-  box-shadow:
-    0 0 0 1px rgba(255,190,79,.03) inset,
-    0 30px 90px rgba(0,0,0,.45);
+  border:1px solid #8d642e;
+  background:#08090e;
+  padding:52px 56px 68px;
+  box-shadow:0 20px 70px #000;
 }
-.article:before,.article:after{
+.article:before,
+.article:after{
   content:"";
   position:absolute;
   top:-7px;
-  width:13px;height:13px;
+  width:12px;
+  height:12px;
   background:#efb84c;
   transform:rotate(45deg);
-  box-shadow:0 0 12px rgba(239,184,76,.18);
 }
 .article:before{left:-7px}
 .article:after{right:-7px}
 
-.topline{
+.meta{
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:13px;
   margin-bottom:24px;
-  color:#d3b681;
-  font-size:14px;
+  color:#8e806b;
+  font-size:13px;
 }
-.tag{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:46px;
-  height:28px;
-  padding:0 10px;
-  border:1px solid #a66f27;
-  color:#f2c369;
-  background:#0e0d0b;
-  box-shadow:0 0 0 1px rgba(255,190,79,.05) inset;
-}
-.date{letter-spacing:.02em}
-
 .title{
-  margin:0 0 24px;
-  font-family:Georgia,"Microsoft JhengHei","Noto Serif TC",serif;
-  font-size:48px !important;
-  line-height:1.28;
+  margin:7px 0 24px;
+  color:#ffd987;
+  font-weight:900;
+  line-height:1.35;
   letter-spacing:.02em;
-  color:#f0c36b !important;
-  font-weight:700;
-  text-shadow:0 2px 18px rgba(235,174,72,.08);
 }
 .summary{
-  margin:0 0 34px;
-  padding-bottom:24px;
-  border-bottom:1px solid rgba(166,111,39,.25);
-  font-size:18px !important;
-  line-height:1.95;
-  color:#efe4d0 !important;
+  margin:0 0 30px;
+  color:#b8ad9e;
+  line-height:1.85;
 }
-.body{
+.content{
+  color:#e8dcc9;
+  line-height:1.9;
   white-space:pre-wrap;
-  font-size:18px !important;
-  line-height:2;
-  color:#f3e8d5 !important;
-  letter-spacing:.01em;
 }
-.body:empty{display:none}
-
-.images{
-  margin-top:26px;
+.gallery{
+  margin-top:24px;
 }
-.images img{
+.gallery img{
   display:block;
   max-width:100%;
   height:auto;
-  margin:26px auto 0;
-  border:1px solid #6b4a20;
-  box-shadow:0 16px 40px rgba(0,0,0,.28);
+  margin:16px auto 0;
+  border:1px solid #60451f;
+  background:#050507;
 }
-
 .back{
   position:fixed;
-  right:28px;
-  bottom:28px;
-  min-width:112px;
-  height:42px;
-  padding:0 18px;
-  border:1px solid #9a6827;
-  background:linear-gradient(180deg,#19140d,#100d0a);
-  color:#eec16b;
+  right:25px;
+  bottom:24px;
+  padding:9px 14px;
+  border:1px solid #725020;
+  background:#120d08;
+  color:#e5c07c;
   cursor:pointer;
   z-index:5;
-  box-shadow:0 10px 28px rgba(0,0,0,.3);
 }
-.back:hover{
-  border-color:#d49735;
-  color:#ffd783;
-}
-
-.loading{
-  min-height:70vh;
-  display:grid;
-  place-items:center;
-  color:#d4b16c;
-  font-size:18px;
-}
-.error{
-  min-height:55vh;
+.back:hover{border-color:#a8752c;color:#ffd987}
+.loading,.error{
+  min-height:60vh;
   display:grid;
   place-items:center;
   text-align:center;
-  color:#e6c27b;
+  color:#c9aa72;
 }
-
-@media(max-width:760px){
+@media(max-width:700px){
   .page{width:100%;padding:0}
-  .article{
-    min-height:100vh;
-    padding:34px 22px 70px;
-    border-left:0;
-    border-right:0;
-  }
+  .article{min-height:100vh;border-left:0;border-right:0;padding:34px 22px 70px}
   .article:before,.article:after{display:none}
-  .title{font-size:34px !important}
-  .summary{font-size:16px !important}
-  .body{font-size:16px !important}
-  .back{right:14px;bottom:14px;min-width:96px}
+  .back{right:12px;bottom:12px}
 }
-
 </style>
 </head>
 <body>
 <div class="page">
   <main id="app" class="loading">公告讀取中…</main>
 </div>
-<button class="back" onclick="location.href='index.html#news'">返回公告</button>
+<button class="back" type="button" onclick="location.href='index.html#news'">返回公告</button>
 
 <script type="module">
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const px=(v,d)=>Math.min(Math.max(+v||d,9),72);
-const co=(v,d)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:d;
 const params=new URLSearchParams(location.search);
 const key=params.get('id');
 
+function catClass(c){
+  return {
+    '活動':'tag-activity',
+    '公告':'tag-announcement',
+    '系統':'tag-system',
+    '更新':'tag-update',
+    '下載':'tag-download',
+    '置頂':'tag-pinned'
+  }[c]||'tag-announcement';
+}
+function fmtDate(v){
+  return String(v||'').replaceAll('-','/');
+}
+function normalizedImages(n){
+  const out=[];
+  const push=v=>{if(v&&!out.includes(v))out.push(v)};
+  if(Array.isArray(n.images))n.images.forEach(push);
+  if(Array.isArray(n.image_urls))n.image_urls.forEach(push);
+  if(typeof n.images==='string'){
+    try{const a=JSON.parse(n.images);if(Array.isArray(a))a.forEach(push)}catch(e){
+      n.images.split(/\n+/).forEach(x=>push(x.trim()));
+    }
+  }
+  push(n.image_url);
+  return out;
+}
+function px(v,min,def){
+  const n=Number(v||def);
+  return Math.max(n,min);
+}
+function safeColor(v,def){
+  return /^#[0-9a-f]{6}$/i.test(String(v||''))?v:def;
+}
+
 async function loadNews(){
-  if(!key) throw new Error('缺少公告 ID');
+  if(!key)throw new Error('缺少公告 ID');
 
   const {initializeApp}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js');
   const {getFirestore,doc,getDoc,collection,getDocs}=await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js');
@@ -183,49 +190,60 @@ async function loadNews(){
   const fb=initializeApp(window.F4_FIREBASE_CONFIG);
   const db=getFirestore(fb);
 
-  // 先用 Firestore document id 直接讀取
   const direct=await getDoc(doc(db,'announcements',key));
-  if(direct.exists()) return {__docId:direct.id,...direct.data()};
+  if(direct.exists())return {__docId:direct.id,...direct.data()};
 
-  // 相容舊資料：若網址帶的是資料內 id，再掃一次找到對應公告
   const snap=await getDocs(collection(db,'announcements'));
   for(const d of snap.docs){
     const row=d.data();
-    if(String(row.id??'')===String(key)) return {__docId:d.id,...row};
+    if(String(row.id??'')===String(key))return {__docId:d.id,...row};
   }
   throw new Error('找不到這篇公告');
 }
 
-function imagesOf(n){
-  if(Array.isArray(n.images)) return n.images.filter(Boolean);
-  if(Array.isArray(n.image_urls)) return n.image_urls.filter(Boolean);
-  const arr=[];
-  if(n.image_url) arr.push(n.image_url);
-  return arr;
-}
-
 try{
   const n=await loadNews();
-  if(n.visible===false) throw new Error('此公告目前未發布');
+  if(n.visible===false)throw new Error('此公告目前未發布');
 
   document.title=`${n.title||'最新公告'}｜F4撿骨182`;
-  const imgs=imagesOf(n);
+
+  const titleSize=px(n.title_size,42,42);
+  const summarySize=px(n.summary_size,15,15);
+  const bodySize=px(n.body_size,16,16);
+  const imgs=normalizedImages(n);
 
   app.className='article';
   app.innerHTML=`
-    <div class="topline">
-      <span class="tag">${esc(n.category||'公告')}</span>
-      <span class="date">${esc((n.published_on||'').replaceAll('-','/'))}</span>
+    <div class="meta">
+      <span class="tag ${catClass(n.category)}">${esc(n.category||'公告')}</span>
+      <span>${esc(fmtDate(n.published_on))}</span>
     </div>
-    <h1 class="title">${esc(n.title||'未命名公告')}</h1>
-    ${n.summary?`<p class="summary">${esc(n.summary)}</p>`:''}
-    <div class="body">${esc(n.body||'')}</div>
-    <div class="images">${imgs.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</div>
+
+    <h1 class="title"
+        style="font-size:${titleSize}px;color:${safeColor(n.title_color,'#ffd987')}">
+      ${esc(n.title||'未命名公告')}
+    </h1>
+
+    ${n.summary?`
+      <p class="summary"
+         style="font-size:${summarySize}px;color:${safeColor(n.summary_color,'#b8ad9e')}">
+        ${esc(n.summary)}
+      </p>`:''}
+
+    <div class="content"
+         style="font-size:${bodySize}px;color:${safeColor(n.body_color,'#e8dcc9')}">
+      ${esc(n.body||'')}
+    </div>
+
+    ${imgs.length?`
+      <div class="gallery">
+        ${imgs.map(src=>`<img src="${esc(src)}" alt="" loading="lazy">`).join('')}
+      </div>`:''}
   `;
 }catch(err){
   console.error(err);
   app.className='error';
-  app.innerHTML=`<h2>公告讀取失敗</h2><p>${esc(err?.message||'請稍後再試')}</p>`;
+  app.innerHTML=`<div><h2>公告讀取失敗</h2><p>${esc(err?.message||'請稍後再試')}</p></div>`;
 }
 </script>
 </body>
