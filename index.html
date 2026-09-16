@@ -78,7 +78,7 @@ async function readFirebase(){
   const db=getFirestore(app);
   async function col(name){
     const s=await getDocs(collection(db,name));
-    return s.docs.map(d=>({id:d.id,...d.data()}));
+    return s.docs.map(d=>({__docId:d.id,id:d.id,...d.data()}));
   }
   const [news,guides,entries,rates,support,downloads,hero]=await Promise.all([
     col('announcements'),col('content_sections'),col('guide_entries'),col('game_rates'),
@@ -153,7 +153,11 @@ function bindHero(){
 function render(){
   sortData(); bindHero();
   nl.innerHTML=D.news.slice(0,6).map(n=>`<div class="nr" data-n="${esc(n.id)}"><span class="tag ${cls(cname(n.category))}">${cname(n.category)}</span><span class="nt">${esc(n.title)}</span><span class="nd">${esc(n.published_on||'')}</span><span>›</span></div>`).join('')||'目前沒有公告';
-  document.querySelectorAll('[data-n]').forEach(x=>x.onclick=()=>openN(x.dataset.n));
+  document.querySelectorAll('[data-n]').forEach(x=>x.onclick=()=>{
+    const n=D.news.find(y=>String(y.id)===String(x.dataset.n));
+    const key=n?.__docId??n?.id??x.dataset.n;
+    location.href=`news.html?id=${encodeURIComponent(key)}`;
+  });
 
   const g=ORDER.map(i=>D.guides.find(x=>String(x.id)===i)).filter(Boolean);
   gg.innerHTML=`<img src="https://cdn-editing-temp.picsart.com/editing-temp/4e1103f2-4580-4263-95f5-e78fe3e71fc4.png">
