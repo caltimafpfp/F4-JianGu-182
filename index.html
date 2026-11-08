@@ -132,14 +132,14 @@ function showE(id){
 }
 function sicon(x){
   const t=(String(x.title||'')+' '+String(x.subtitle||'')).toLowerCase();
-  if(t.includes('line'))return'https://cdn.simpleicons.org/line/00C300';
-  if(t.includes('fb')||t.includes('facebook')||t.includes('粉絲'))return'https://api.iconify.design/logos:facebook.svg';
-  if(t.includes('贊助'))return'https://api.iconify.design/material-symbols:favorite-rounded.svg?color=%23E3A23A';
-  return'https://api.iconify.design/material-symbols:report-rounded.svg?color=%23D95849'
+  if(t.includes('line'))return'assets/icons/line.svg';
+  if(t.includes('fb')||t.includes('facebook')||t.includes('粉絲'))return'assets/icons/facebook.svg';
+  if(t.includes('贊助'))return'assets/icons/donate.svg';
+  return'assets/icons/report.svg'
 }
 function dicon(x){
   const t=(String(x.title||'')+' '+String(x.subtitle||'')).toLowerCase();
-  return t.includes('google')||t.includes('drive')?'https://api.iconify.design/logos:google-drive.svg':'https://api.iconify.design/material-symbols:download-rounded.svg?color=%23D9A03A'
+  return t.includes('google')||t.includes('drive')?'assets/icons/google-drive.svg':'assets/icons/download.svg'
 }
 function bindHero(){
   const a=(D.hero||[]).slice();
